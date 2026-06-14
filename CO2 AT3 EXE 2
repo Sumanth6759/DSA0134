@@ -1,0 +1,100 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Product
+{
+private:
+    string name;
+    double price;
+    int quantity;
+public:
+    void input()
+    {
+        cout << "Product Name: ";
+        cin >> name;
+        cout << "Price: ";
+        cin >> price;
+        cout << "Quantity Sold: ";
+        cin >> quantity;
+    }
+    double sales()
+    {
+        return price * quantity;
+    }
+    string getName()
+    {
+        return name;
+    }
+};
+int main()
+{
+    int stores;
+    cout << "Enter Number of Stores: ";
+    cin >> stores;
+    double overallSales=0;
+    double bestStoreSales=0;
+    int bestStore=0;
+    string bestProduct;
+    double bestRevenue=0;
+    for(int i=0;i<stores;i++)
+    {
+        int n;
+        cout << "\nProducts in Store "
+             << i+1 << ": ";
+        cin >> n;
+        Product p[100];
+        double storeSales=0;
+        for(int j=0;j<n;j++)
+        {
+            p[j].input();
+            double rev=p[j].sales();
+            storeSales+=rev;
+            if(rev>bestRevenue)
+            {
+                bestRevenue=rev;
+                bestProduct=p[j].getName();
+            }
+        }
+        cout << "Store " << i+1
+             << " Sales = "
+             << storeSales << endl;
+        overallSales+=storeSales;
+        if(storeSales>bestStoreSales)
+        {
+            bestStoreSales=storeSales;
+            bestStore=i+1;
+        }
+    }
+    cout << "\nOverall Sales = "
+         << overallSales << endl;
+    cout << "Best Store = Store "
+         << bestStore << endl;
+    cout << "Best Selling Product = "
+         << bestProduct << endl;
+    return 0;
+}
+
+Output:
+Enter Number of Stores: 2
+
+Products in Store 1: 2
+Product Name: Laptop
+Price: 50000
+Quantity Sold: 2
+Product Name: Mouse
+Price: 2000
+Quantity Sold: 5
+Store 1 Sales = 110000
+
+Products in Store 2: 2
+Product Name: Mobile
+Price: 20000
+Quantity Sold: 3
+Product Name: Charger
+Price: 500
+Quantity Sold: 2
+Store 2 Sales = 61000
+
+Overall Sales = 171000
+Best Store = Store 1
+Best Selling Product = Laptop
