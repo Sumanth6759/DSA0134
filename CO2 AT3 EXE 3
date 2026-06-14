@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Team
+{
+private:
+    string name;
+    int wins, draws, losses;
+    int goalsScored, goalsConceded;
+public:
+    static int totalTeams;
+    void input()
+    {
+        cout << "Team Name: ";
+        cin >> name;
+        cout << "Wins: ";
+        cin >> wins;
+        cout << "Draws: ";
+        cin >> draws;
+        cout << "Losses: ";
+        cin >> losses;
+        cout << "Goals Scored: ";
+        cin >> goalsScored;
+        cout << "Goals Conceded: ";
+        cin >> goalsConceded;
+        totalTeams++;
+    }
+    int points()
+    {
+        return wins*3 + draws;
+    }
+    int goalDifference()
+    {
+        return goalsScored - goalsConceded;
+    }
+    string getName()
+    {
+        return name;
+    }
+};
+int Team::totalTeams = 0;
+int main()
+{
+    int groups;
+    cout << "Enter Number of Groups: ";
+    cin >> groups;
+    string champion;
+    int championPoints=-1;
+    for(int i=0;i<groups;i++)
+    {
+        int n;
+        cout << "\nTeams in Group "
+             << i+1 << ": ";
+        cin >> n;
+        Team t[100];
+        int bestPoints=-1;
+        string winner;
+        for(int j=0;j<n;j++)
+        {
+            t[j].input();
+            if(t[j].points() > bestPoints)
+            {
+                bestPoints=t[j].points();
+                winner=t[j].getName();
+            }
+        }
+        cout << "Group Winner: "
+             << winner << endl;
+        if(bestPoints > championPoints)
+        {
+            championPoints=bestPoints;
+            champion=winner;
+        }
+    }
+    cout << "\nOverall Champion: "
+         << champion << endl;
+    cout << "Total Teams: "
+         << Team::totalTeams << endl;
+    return 0;
+}
+
+Output:
+Enter Number of Groups: 2
+
+Teams in Group 1: 2
+Team Name: India
+Wins: 3
+Draws: 1
+Losses: 0
+Goals Scored: 3
+Goals Conceded: 1
+Team Name: Australia
+Wins: 2
+Draws: 1
+Losses: 2
+Goals Scored: 2
+Goals Conceded: 5
+Group Winner: India
+
+Teams in Group 2: Brazil
+Group Winner:
+
+Overall Champion: India
+Total Teams: 2
