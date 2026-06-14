@@ -1,0 +1,74 @@
+#include <iostream>
+using namespace std;
+class Election
+{
+private:
+    int votes[50];
+public:
+    void input(int candidates)
+    {
+        for(int i=0;i<candidates;i++)
+        {
+            cout << "Candidate " << i+1 << " Votes: ";
+            cin >> votes[i];
+        }
+    }
+    int getVote(int index)
+    {
+        return votes[index];
+    }
+};
+int main()
+{
+    int regions, candidates;
+    cout << "Enter Regions: ";
+    cin >> regions;
+    cout << "Enter Candidates: ";
+    cin >> candidates;
+    Election e[50];
+    int total[50]={0};
+    for(int i=0;i<regions;i++)
+    {
+        cout << "\nRegion " << i+1 << endl;
+        e[i].input(candidates);
+        int maxVote=-1, winner=0;
+        for(int j=0;j<candidates;j++)
+        {
+            total[j]+=e[i].getVote(j);
+            if(e[i].getVote(j)>maxVote)
+            {
+                maxVote=e[i].getVote(j);
+                winner=j+1;
+            }
+        }
+        cout << "Region Winner: Candidate "
+             << winner << endl;
+    }
+    int overallWinner=1;
+    for(int i=1;i<candidates;i++)
+    {
+        if(total[i] > total[overallWinner-1])
+            overallWinner=i+1;
+    }
+    cout << "\nOverall Winner: Candidate "
+         << overallWinner << endl;
+    return 0;
+}
+
+Output:
+Enter Regions: 2
+Enter Candidates: 3
+
+Region 1
+Candidate 1 Votes: 100
+Candidate 2 Votes: 150
+Candidate 3 Votes: 200
+Region Winner: Candidate 3
+
+Region 2
+Candidate 1 Votes: 50
+Candidate 2 Votes: 200
+Candidate 3 Votes: 125
+Region Winner: Candidate 2
+
+Overall Winner: Candidate 2
