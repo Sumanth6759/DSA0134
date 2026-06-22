@@ -1,0 +1,229 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Encryption Function
+string encryptMessage(string msg)
+{
+    for (size_t i = 0; i < msg.length(); i++)
+    {
+        msg[i] = msg[i] + 3;
+    }
+    return msg;
+}
+
+// Decryption Function
+string decryptMessage(string msg)
+{
+    for (size_t i = 0; i < msg.length(); i++)
+    {
+        msg[i] = msg[i] - 3;
+    }
+    return msg;
+}
+
+// User Class
+class User
+{
+public:
+    string username;
+    string password;
+
+    User(string u, string p)
+    {
+        username = u;
+        password = p;
+    }
+};
+
+// Message Class
+class Message
+{
+public:
+    string sender;
+    string receiver;
+    string encryptedText;
+
+    Message(string s, string r, string text)
+    {
+        sender = s;
+        receiver = r;
+        encryptedText = encryptMessage(text);
+    }
+};
+
+// Global Storage
+vector<User> users;
+vector<Message> messageList;
+
+// Register User
+void registerUser()
+{
+    string uname, pass;
+
+    cout << "\nEnter Username: ";
+    cin >> uname;
+
+    cout << "Enter Password: ";
+    cin >> pass;
+
+    for (const auto &u : users)
+    {
+        if (u.username == uname)
+        {
+            cout << "Username already exists!\n";
+            return;
+        }
+    }
+
+    users.push_back(User(uname, pass));
+    cout << "Registration Successful!\n";
+}
+
+// Login User
+int loginUser()
+{
+    string uname, pass;
+
+    cout << "\nEnter Username: ";
+    cin >> uname;
+
+    cout << "Enter Password: ";
+    cin >> pass;
+
+    for (int i = 0; i < users.size(); i++)
+    {
+        if (users[i].username == uname &&
+            users[i].password == pass)
+        {
+            cout << "Login Successful!\n";
+            return i;
+        }
+    }
+
+    cout << "Invalid Username or Password!\n";
+    return -1;
+}
+
+// Send Message
+void sendMessage(string sender)
+{
+    string receiver;
+    string text;
+
+    cout << "Enter Receiver Username: ";
+    cin >> receiver;
+    cin.ignore();
+
+    cout << "Enter Message: ";
+    getline(cin, text);
+
+    messageList.push_back(
+        Message(sender, receiver, text));
+
+    cout << "Message Sent Securely!\n";
+}
+
+// View Inbox
+void viewInbox(string username)
+{
+    bool found = false;
+
+    cout << "\n===== INBOX =====\n";
+
+    for (const auto &m : messageList)
+    {
+        if (m.receiver == username)
+        {
+            cout << "\nFrom: " << m.sender << endl;
+            cout << "Message: "
+                 << decryptMessage(m.encryptedText)
+                 << endl;
+            cout << "------------------------\n";
+
+            found = true;
+        }
+    }
+
+    if (!found)
+    {
+        cout << "No Messages Found!\n";
+    }
+}
+
+// Main Function
+int main()
+{
+    int choice;
+
+    while (true)
+    {
+        cout << "\n=================================\n";
+        cout << " SECURE MESSAGING PORTAL\n";
+        cout << "=================================\n";
+        cout << "1. Register\n";
+        cout << "2. Login\n";
+        cout << "3. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            registerUser();
+            break;
+
+        case 2:
+        {
+            int userIndex = loginUser();
+
+            if (userIndex != -1)
+            {
+                int userChoice;
+
+                do
+                {
+                    cout << "\n===== USER MENU =====\n";
+                    cout << "1. Send Message\n";
+                    cout << "2. View Inbox\n";
+                    cout << "3. Logout\n";
+                    cout << "Enter Choice: ";
+                    cin >> userChoice;
+
+                    switch (userChoice)
+                    {
+                    case 1:
+                        sendMessage(users[userIndex].username);
+                        break;
+
+                    case 2:
+                        viewInbox(users[userIndex].username);
+                        break;
+
+                    case 3:
+                        cout << "Logged Out Successfully!\n";
+                        break;
+
+                    default:
+                        cout << "Invalid Choice!\n";
+                    }
+                }
+                while (userChoice != 3);
+            }
+
+            break;
+        }
+
+        case 3:
+            cout << "\nThank You for Using Secure Messaging Portal!\n";
+            return 0;
+
+        default:
+            cout << "Invalid Choice!\n";
+        }
+    }
+
+    return 0;
+}
