@@ -1,0 +1,262 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// ================= ABSTRACT CLASS =================
+class Person
+{
+protected:
+    int id;
+    string name;
+
+public:
+    Person(int i, string n) : id(i), name(n) {}
+
+    virtual void display() = 0; // Pure Virtual Function
+
+    virtual ~Person()
+    {
+        cout << "Person Destructor Called\n";
+    }
+};
+
+// ================= PATIENT CLASS =================
+class Patient : public Person
+{
+private:
+    int age;
+    string disease;
+
+public:
+    Patient(int i, string n, int a, string d)
+        : Person(i, n)
+    {
+        if (a < 0)
+            throw invalid_argument("Age cannot be negative");
+
+        age = a;
+        disease = d;
+    }
+
+    void display() override
+    {
+        cout << "\nPatient ID : " << id;
+        cout << "\nName       : " << name;
+        cout << "\nAge        : " << age;
+        cout << "\nDisease    : " << disease << endl;
+    }
+
+    void saveToFile()
+    {
+        ofstream file("patients.txt", ios::app);
+        file << id << " "
+             << name << " "
+             << age << " "
+             << disease << endl;
+        file.close();
+    }
+
+    ~Patient()
+    {
+        cout << "Patient Destructor Called\n";
+    }
+};
+
+// ================= DOCTOR CLASS =================
+class Doctor : public Person
+{
+private:
+    string specialization;
+
+public:
+    Doctor(int i, string n, string s)
+        : Person(i, n), specialization(s) {}
+
+    void display() override
+    {
+        cout << "\nDoctor ID      : " << id;
+        cout << "\nName           : " << name;
+        cout << "\nSpecialization : " << specialization << endl;
+    }
+
+    ~Doctor()
+    {
+        cout << "Doctor Destructor Called\n";
+    }
+};
+
+// ================= BILL CLASS =================
+class Bill
+{
+private:
+    double amount;
+
+public:
+    Bill(double a = 0)
+    {
+        amount = a;
+    }
+
+    // Operator Overloading
+    Bill operator+(Bill b)
+    {
+        return Bill(amount + b.amount);
+    }
+
+    void display()
+    {
+        cout << "Total Bill Amount: Rs." << amount << endl;
+    }
+};
+
+// ================= HOSPITAL CLASS =================
+class Hospital
+{
+private:
+    vector<Person *> people;
+
+public:
+    void addPerson(Person *p)
+    {
+        people.push_back(p);
+    }
+
+    void showAll()
+    {
+        cout << "\n===== HOSPITAL RECORDS =====\n";
+
+        for (Person *p : people)
+        {
+            p->display();
+            cout << "-------------------\n";
+        }
+    }
+
+    ~Hospital()
+    {
+        for (Person *p : people)
+        {
+            delete p;
+        }
+    }
+};
+
+// ================= MAIN =================
+int main()
+{
+    Hospital hospital;
+
+    int choice;
+
+    do
+    {
+        cout << "\n===== SMART HOSPITAL MANAGEMENT =====";
+        cout << "\n1. Add Patient";
+        cout << "\n2. Add Doctor";
+        cout << "\n3. Display Records";
+        cout << "\n4. Generate Bill";
+        cout << "\n5. Exit";
+        cout << "\nEnter Choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+        {
+            try
+            {
+                int id, age;
+                string name, disease;
+
+                cout << "Enter Patient ID: ";
+                cin >> id;
+
+                cout << "Enter Name: ";
+                cin >> name;
+
+                cout << "Enter Age: ";
+                cin >> age;
+
+                cout << "Enter Disease: ";
+                cin >> disease;
+
+                Patient *p = new Patient(id, name, age, disease);
+
+                p->saveToFile();
+
+                hospital.addPerson(p);
+
+                cout << "Patient Added Successfully\n";
+            }
+            catch (exception &e)
+            {
+                cout << "Error: " << e.what() << endl;
+            }
+
+            break;
+        }
+
+        case 2:
+        {
+            int id;
+            string name, specialization;
+
+            cout << "Enter Doctor ID: ";
+            cin >> id;
+
+            cout << "Enter Name: ";
+            cin >> name;
+
+            cout << "Enter Specialization: ";
+            cin >> specialization;
+
+            Doctor *d = new Doctor(id, name, specialization);
+
+            hospital.addPerson(d);
+
+            cout << "Doctor Added Successfully\n";
+
+            break;
+        }
+
+        case 3:
+        {
+            hospital.showAll();
+            break;
+        }
+
+        case 4:
+        {
+            double consultation, medicine;
+
+            cout << "Consultation Fee: ";
+            cin >> consultation;
+
+            cout << "Medicine Charges: ";
+            cin >> medicine;
+
+            Bill b1(consultation);
+            Bill b2(medicine);
+
+            Bill total = b1 + b2;
+
+            total.display();
+
+            break;
+        }
+
+        case 5:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid Choice\n";
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
